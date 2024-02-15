@@ -1,6 +1,6 @@
-def call(String aws_account_id, String region, String ecr_repoName){
-    
-    sh """
-     docker rmi ${registry}
-    """
-}
+static def cleanup(String registry, String repository, String imageTag) {
+        // Execute Docker commands to remove the specified image
+        sh """
+            docker rmi ${registry}
+        """
+    }
