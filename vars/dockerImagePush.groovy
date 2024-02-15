@@ -1,7 +1,13 @@
-def call(String aws_account_id, String region, String ecr_repoName){
-    
-    sh """
-     aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${aws_account_id}.dkr.ecr.${region}.amazonaws.com
-     docker push ${aws_account_id}.dkr.ecr.${region}.amazonaws.com/${ecr_repoName}:latest
-    """
+// my-shared-library/vars/pushToECR.groovy
+
+def call() {
+    // Define the AWS region and ECR repository URL
+    def region = "ap-south-1"
+    def registry = "670855725719.dkr.ecr.ap-south-1.amazonaws.com/testecr"
+
+    // Perform Docker image push to ECR
+    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'docker-ecr', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+        sh "aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${registry}"
+        sh "docker push ${registry}"
+    }
 }
