@@ -1,6 +1,13 @@
-def call(String aws_account_id, String region, String ecr_repoName){
-    
-    sh """
-     docker rmi ${ecr_repoName}:latest ${aws_account_id}.dkr.ecr.${region}.amazonaws.com/${ecr_repoName}:latest
-    """
+def call(String aws_account_id, String region, String ecr_repoName) {
+    // Get a list of all image IDs
+    def imageList = sh(script: "docker images -q", returnStdout: true).trim()
+
+    // Split the list of image IDs by newline
+    def imageIDs = imageList.split('\n')
+
+    // Iterate through each image ID and delete it
+    for (def imageID in imageIDs) {
+        // Delete the image
+        sh "docker rmi ${imageID}"
+    }
 }
